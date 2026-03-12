@@ -1,6 +1,6 @@
 <template>
   <!-- 全局布局，比如一个容器 -->
-  <div class="bg-[url('images/example-app-bg.png')] bg-cover bg-center bg-no-repeat min-h-screen">
+  <div class="bg-[url('/images/example-app-bg.png')] bg-fixed bg-cover bg-center bg-no-repeat ">
     <!-- layout=default -->
      <NuxtLayout>
       <NuxtPage />
