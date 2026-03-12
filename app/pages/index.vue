@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 h-[100dvh] z-1 flex items-center justify-center">
+  <div class="fixed inset-0 w-[100dvw] h-[100dvh] z-1 flex flex-col items-center justify-center">
     <div class="w-3/4 h-1/2 bg-white-1/30 flex flex-col items-center justify-center">
       <img src="/images/im.jpg" class="w-[14dvh] h-[14dvh] rounded-full mb-4" alt="头像">
       <div class="bg-black/80 rounded-lg w-1/2 h-1/5 px-6 py-3 mb-4">
