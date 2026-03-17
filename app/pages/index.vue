@@ -1,8 +1,8 @@
 <template>
   <!-- 首页 -->
-  <div class="w-2/3 h-auto  flex flex-col items-center ">
-    <div class="w-full h-[100dvh] bg-white-1/30 flex flex-col items-center justify-center">
-      <img src="/images/im.jpg" class="w-[14dvh] h-[14dvh] rounded-full mb-4" alt="头像">
+  <div class="w-2/3 h-auto flex flex-col items-center justify-center">
+    <div class="w-full h-[100dvh]  bg-white-1/30 flex flex-col items-center justify-center">
+      <img src="/images/im.jpg" class="my-auto w-[10dvh] h-[10dvh] rounded-full mb-4" alt="头像">
       <div class="bg-black/80 rounded-lg w-1/2 h-1/7 px-6 py-3 mb-4">
         <!--博客主-->
         <h1 class="text-3xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Lestine</h1>
@@ -21,17 +21,18 @@
         </a>
       </div>
       <div class="mt-auto py-5 m-0">
-        <img src="image" 
       </div>
     </div>
   </div>
   <!--内容部分-->
   <div class="bg-white/75 m-0 p-0 w-[99dvw] h-auto backdrop-blur-lg flex flex-col items-center justify-center py-8">
-    <p>
-      text
-      <br>
-      text
-    </p>
+    <blogPostCard v-for="post in posts" :key="post.id" :title="post.title" :content="post.content" :link="post.link"/>
   </div>
 
 </template>
+
+
+<script setup>
+import blogPostCard from '@/components/blogPostCard.vue'
+import { posts } from '~/data/blogPostCardItems'
+</script>
