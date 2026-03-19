@@ -34,5 +34,5 @@
 
 <script setup>
 import blogPostCard from '@/components/blogPostCard.vue'
-import { posts } from '~/data/blogPostCardItems'
+import { posts } from '~/data/blogPostCardItems.ts'
 </script>
