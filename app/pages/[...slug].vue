@@ -11,12 +11,14 @@ const { data: page } = await useAsyncData(
 </script>
 
 <template>
-  <div class=" min-h-[100dvh] bg-white/90 w-[99dvw] z-10 flex flex-col items-center py-24">
-    <header></header>
+  <div class="min-h-[100dvh] bg-white/90 w-full-no-scrollbar z-10 flex flex-col  py-24">
+    <div class="w-2/5 flex flex-col mx-auto">
+      <header></header>
       <ContentRenderer v-if="page" :value="page" />
       <div v-else class="flex items-center justify-center min-h-[50dvh]">
         <p class="text-gray-500">页面未找到</p>
       </div>
-    <footer></footer>
+      <footer></footer>
+    </div>
   </div>
 </template>
