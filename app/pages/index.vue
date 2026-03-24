@@ -2,8 +2,8 @@
   <!-- 首页 -->
   <div class="w-2/3 h-auto flex flex-col items-center justify-center">
     <div class="w-full h-[100dvh]  bg-white-1/30 flex flex-col items-center justify-center">
-      <img src="/images/im.jpg" class="my-auto w-[10dvh] h-[10dvh] rounded-full mb-4" alt="头像">
-      <div class="bg-black/80 rounded-lg w-1/2 h-1/7 px-6 py-3 mb-4">
+      <img src="/images/im.jpg" class="my-auto w-28 h-28 rounded-full mb-4" alt="头像">
+      <div class="bg-black/80 rounded-lg w-full lg:w-[512px] h-1/7 px-2 lg:px-4 py-3 mb-4">
         <!--博客主-->
         <h1 class="text-3xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Lestine</h1>
         <!--个性签名-->
@@ -25,12 +25,14 @@
     </div>
   </div>
   <!--内容部分-->
-  <div class="bg-white/75 m-0 p-0 w-full-no-scrollbar h-auto backdrop-blur-lg flex flex-col items-center justify-center py-8">
+  <div class="bg-white/70 m-0 p-0 w-full-no-scrollbar h-auto backdrop-blur-lg flex flex-col items-center justify-center py-8">
     <div class="mx-auto items-center justify-center flex flex-col">
       <h2 class="text-2xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Articles</h2>
       <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
     </div>
-    <blogPostCard v-for="post in posts" :key="post.id" :title="post.title" :content="post.content" :link="post.link" :image="post.image"/>
+    <div class="w-full px-12 lg:w-[912px] lg:px-0 ">
+      <blogPostCard v-for="post in posts" :key="post.id" :title="post.title" :content="post.content" :link="post.link" :image="post.image"/>
+    </div>
   </div>
 
 </template>
