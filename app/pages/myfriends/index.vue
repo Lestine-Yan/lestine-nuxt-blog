@@ -7,10 +7,10 @@
         </div>
     </div>
 </template>
+
 <script setup lang="ts">
 import friendCard from '@/components/friendCard.vue'
 import { friendLink } from '@/data/friendLink'
-
 </script>
 
 <style scoped>
