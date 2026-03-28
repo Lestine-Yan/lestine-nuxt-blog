@@ -31,7 +31,8 @@
       <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
     </div>
     <div class="w-full px-12 lg:w-[912px] lg:px-0 ">
-      <blogPostCard v-for="post in posts" :key="post.id" :title="post.title" :content="post.content" :link="post.link" :image="post.image"/>
+      <blogPostCard v-for="learnpost in learnposts" :key="learnpost.id" :title="learnpost.title" :content="learnpost.content" :link="learnpost.link" :image="learnpost.image"/>
+      <blogPostCard v-for="talkpost in talkposts" :key="talkpost.id" :title="talkpost.title" :content="talkpost.content" :link="talkpost.link" :image="talkpost.image"/>
     </div>
   </div>
 
@@ -40,5 +41,6 @@
 
 <script setup>
 import blogPostCard from '@/components/blogPostCard.vue'
-import { posts } from '~/data/blogPostCardItems.ts'
+const learnposts = await queryCollection('learnpost').all()
+const talkposts = await queryCollection('talkpost').all()
 </script>
