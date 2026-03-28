@@ -13,5 +13,5 @@
 
 <script setup lang="ts">
 import blogPostCard from '@/components/blogPostCard.vue'
-import { posts } from '@/data/talkPostCardItems'
+const posts = await queryCollection('talkpost').all()
 </script>
