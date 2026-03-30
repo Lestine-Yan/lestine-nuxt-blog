@@ -1,7 +1,7 @@
 <template>
   <!-- 首页 -->
   <div class="w-2/3 h-auto flex flex-col items-center justify-center">
-    <div class="w-full h-[100dvh]  bg-white-1/30 flex flex-col items-center justify-center">
+    <div class="w-full h-[100dvh]  bg-white-1/30 flex flex-col items-center justify-center animate-fade-up">
       <img src="/images/im.jpg" class="my-auto w-28 h-28 rounded-full mb-4" alt="头像">
       <div class="bg-black/80 rounded-lg w-full lg:w-[512px] h-1/7 px-2 lg:px-4 py-3 mb-4">
         <!--博客主-->
@@ -21,6 +21,7 @@
         </a>
       </div>
       <div class="mt-auto py-5 m-0">
+        <img src="/images/arrow.svg" class="w-16 h-16 rounded-full animate-bounce" alt="箭头">
       </div>
     </div>
   </div>
@@ -44,3 +45,9 @@ import blogPostCard from '@/components/blogPostCard.vue'
 const learnposts = await queryCollection('learnpost').all()
 const talkposts = await queryCollection('talkpost').all()
 </script>
+
+<style scoped>
+
+@import '/assets/animates.css'
+
+</style>
