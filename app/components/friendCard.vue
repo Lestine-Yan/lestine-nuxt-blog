@@ -1,6 +1,6 @@
 <template>
     <a :href="url" target="_blank">
-    <div class=" bg-white/50 p-6 rounded-md  w-[200px] h-[200px] m-4 border border-white shadow-sm">
+    <div class=" bg-white/50 p-6 rounded-md  w-[200px] h-[200px] m-4 border border-white shadow-sm animate-fade-up">
         <img :src="image" alt="友链" class="w-24 h-24 rounded-full mx-auto">
         <h2 class="text-lg font-bold my-1">{{ name }}</h2>
         <p class="text-sm text-gray-500">{{ description }}</p>
@@ -31,3 +31,9 @@ const props = defineProps({
     
 })
 </script>
+
+<style scoped>
+
+@import '/assets/animates.css'
+
+</style>
