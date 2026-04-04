@@ -1,0 +1,14 @@
+node_modules
+.nuxt
+.output
+dist
+.git
+.gitignore
+*.md
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.log
+.vscode
+.idea
