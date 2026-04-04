@@ -1,5 +1,5 @@
 <template>
-  <code class="bg-gray-100 text-red-800 px-1.5 py-0.5 rounded text-sm font-mono">
+  <code class="bg-red-800 text-white px-1.5 py-0.5 rounded text-sm font-mono">
     <slot />
   </code>
 </template>
