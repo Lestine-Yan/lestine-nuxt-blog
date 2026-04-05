@@ -2,7 +2,7 @@
     <div class="w-full-no-scrollbar min-h-[100dvh] bg-white/70 z-10 flex flex-col  py-24 backdrop-blur-lg">
         <!--占位符，待完善-->
         <h1 class="text-4xl font-bold text-center py-16">友人帐</h1>
-        <div class="flex lg:mx-60">
+        <div class="flex mx-auto">
             <friendCard v-for="friend in friendLink" :key="friend.id" :image="friend.image" :name="friend.name" :description="friend.description" :url="friend.url" />
         </div>
     </div>

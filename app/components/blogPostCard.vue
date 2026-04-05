@@ -1,6 +1,6 @@
 <template>
-  <NuxtLink :to="link">
-  <div class="bg-white rounded-2xl my-8 w-full shadow-2xl pb-2 transition-transform duration-300 hover:-translate-y-2 hover:shadow-3xl animate-fade-up">
+  <NuxtLink :to="link" class="block animate-fade-up">
+  <div class="bg-white rounded-2xl my-8 w-full shadow-xl pb-2 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
     <img :src="image" :alt="title" class="w-full h-48 object-cover rounded-t-lg transition-all">
     <div class="z-10 bg-white/10 pl-2 ml-4 mt-4">
       <h2 class="text-xl font-bold text-black mb-1">{{ title }}</h2>
