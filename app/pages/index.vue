@@ -10,12 +10,6 @@
         <p class="text-lg text-white text-center" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">梦想在远方，我在月球</p>
       </div>
       <div class="flex space-x-4">
-        <a href="#" target="_blank" class="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-black/60 transition-colors">
-          <img src="/images/qq.png" class="w-8 h-8 rounded-full" alt="QQ">
-        </a>
-        <a href="#" target="_blank" class="w-10 h-10 rounded-full bg-white flex items-center justify-center  hover:bg-black/60 transition-colors">
-          <img src="/images/wx.png" class="w-8 h-8 rounded-full" alt="微信">
-        </a>
         <a href="https://github.com/Lestine-Yan" target="_blank" class="w-10 h-10 rounded-full bg-white flex items-center justify-center  hover:bg-black/60 transition-colors">
           <img src="/images/gh.webp" class="w-8 h-8 rounded-full" alt="GitHub">
         </a>
@@ -31,7 +25,7 @@
       <h2 class="text-2xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Articles</h2>
       <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
     </div>
-    <div class="w-full px-12 lg:w-[912px] lg:px-0 ">
+    <div class="w-full px-4 lg:w-[912px] lg:px-0 ">
       <blogPostCard v-for="learnpost in learnposts" :key="learnpost.id" :title="learnpost.title" :content="learnpost.content" :link="learnpost.link" :image="learnpost.image"/>
       <blogPostCard v-for="talkpost in talkposts" :key="talkpost.id" :title="talkpost.title" :content="talkpost.content" :link="talkpost.link" :image="talkpost.image"/>
     </div>

@@ -26,8 +26,7 @@ export default defineContentConfig({
     }),
     content: defineCollection({
       type: 'page',
-      source: '**/*.md',
-      exclude: ['learnpost/*.md', 'talkpost/*.md']
+      source: '**/*.md'
     })
   }
 })
