@@ -16,7 +16,7 @@
 /* 全局样式 */
 html {
   overflow-y: auto;
-  scrollbar-gutter: auto;
+  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {
