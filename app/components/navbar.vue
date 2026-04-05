@@ -15,7 +15,7 @@
 
   <div v-if="isMobile" class="z-40 fixed inset-x-0 top-0">
     <nav class="bg-white/90 backdrop-blur-lg shadow-lg border-b border-white/50 w-full px-4 py-2 flex justify-between items-center">
-      <span class="font-bold text-red-800 text-lg">Lestine</span>
+      <NuxtLink to="/" class="font-bold text-red-800 text-lg">Lestine</NuxtLink>
       <button @click="toggleDrawer" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
         <svg v-if="!isDrawerOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />

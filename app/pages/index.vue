@@ -20,7 +20,7 @@
     </div>
   </div>
   <!--内容部分-->
-  <div class="bg-white/70 m-0 p-0 w-full-no-scrollbar h-auto backdrop-blur-lg flex flex-col items-center justify-center py-8">
+  <div class="bg-white/70 m-0 p-0 w-[100dvw] md:w-full-no-scrollbar h-auto backdrop-blur-lg flex flex-col items-center justify-center py-8">
     <div class="mx-auto items-center justify-center flex flex-col">
       <h2 class="text-2xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Articles</h2>
       <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
