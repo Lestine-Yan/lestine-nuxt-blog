@@ -1,13 +1,13 @@
 <template>
-  <header v-if="!isMobile" class="py-4 mx-auto z-50 container flex justify-center fixed inset-x-0 animate-slide-down">
+  <header v-if="!isMobile" class="py-4 mx-auto z-50 flex justify-center fixed inset-x-0 animate-slide-down">
     <div class="m-0 flex justify-center w-auto px-0">
-      <nav class="bg-white/50 backdrop-blur-lg rounded-full px-10 py-1 shadow-lg border border-white/50 w-auto">
-        <ul class="flex flex-nowrap justify-center text-center">
-          <li><NuxtLink to="/" class="block px-6 py-2 rounded-full font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white">首页</NuxtLink></li>
-          <li><NuxtLink to="/talk" class="block px-6 py-2 rounded-full font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white">杂谈</NuxtLink></li>
-          <li><NuxtLink to="/learn" class="block px-6 py-2 rounded-full font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white">随笔</NuxtLink></li>
-          <li><NuxtLink to="/myfriends" class="block px-6 py-2 rounded-full font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white">友人帐</NuxtLink></li>
-          <li><NuxtLink to="/about" class="block px-6 py-2 rounded-full font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white">关于我</NuxtLink></li>
+      <nav class="bg-white/70 rounded-full px-8 py-1 shadow-lg border backdrop-blur-lg border-white/90 w-auto">
+        <ul class="flex flex-nowrap justify-center items-center text-center">
+          <li><NuxtLink to="/" :class="['flex items-center gap-2 px-5 py-2 rounded-full font-medium text-base transition-all duration-300', isActive('/') ? 'bg-red-700 text-white' : 'hover:bg-red-700 hover:text-white']"><img src="/images/svg/home.svg" alt="首页图标" class="w-5 h-5" />首页</NuxtLink></li>
+          <li><NuxtLink to="/talk" :class="['flex items-center gap-2 px-5 py-2 rounded-full font-medium text-base transition-all duration-300', isActive('/talk') ? 'bg-red-700 text-white' : 'hover:bg-red-700 hover:text-white']"><img src="/images/svg/talk.svg" alt="杂谈图标" class="w-5 h-5" />杂谈</NuxtLink></li>
+          <li><NuxtLink to="/learn" :class="['flex items-center gap-2 px-5 py-2 rounded-full font-medium text-base transition-all duration-300', isActive('/learn') ? 'bg-red-700 text-white' : 'hover:bg-red-700 hover:text-white']"><img src="/images/svg/learn.svg" alt="随笔图标" class="w-5 h-5" />随笔</NuxtLink></li>
+          <li><NuxtLink to="/myfriends" :class="['flex items-center gap-2 px-5 py-2 rounded-full font-medium text-base transition-all duration-300', isActive('/myfriends') ? 'bg-red-700 text-white' : 'hover:bg-red-700 hover:text-white']"><img src="/images/svg/friend.svg" alt="友人帐图标" class="w-5 h-5" />友人帐</NuxtLink></li>
+          <li><NuxtLink to="/about" :class="['flex items-center gap-2 px-5 py-2 rounded-full font-medium text-base transition-all duration-300', isActive('/about') ? 'bg-red-700 text-white' : 'hover:bg-red-700 hover:text-white']"><img src="/images/svg/about.svg" alt="关于我图标" class="w-5 h-5" />关于我</NuxtLink></li>
         </ul>
       </nav>
     </div>
@@ -36,19 +36,26 @@
       class="fixed top-[52px] inset-x-0 bg-white/95 backdrop-blur-lg shadow-xl z-30 transform transition-all duration-300 origin-top"
       :class="isDrawerOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'"
     >
-      <ul class="flex flex-col">
-        <li><NuxtLink to="/" @click="closeDrawer" class="block px-6 py-3 font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white border-b border-gray-100 text-center">首页</NuxtLink></li>
-        <li><NuxtLink to="/talk" @click="closeDrawer" class="block px-6 py-3 font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white border-b border-gray-100 text-center">杂谈</NuxtLink></li>
-        <li><NuxtLink to="/learn" @click="closeDrawer" class="block px-6 py-3 font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white border-b border-gray-100 text-center">随笔</NuxtLink></li>
-        <li><NuxtLink to="/myfriends" @click="closeDrawer" class="block px-6 py-3 font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white border-b border-gray-100 text-center">友人帐</NuxtLink></li>
-        <li><NuxtLink to="/about" @click="closeDrawer" class="block px-6 py-3 font-medium text-base transition-all duration-300 hover:bg-red-700 hover:text-white text-center">关于我</NuxtLink></li>
+      <ul class="flex flex-col ">
+        <li><NuxtLink to="/" @click="closeDrawer" :class="['flex gap-2 px-6 py-3 mx-2 rounded-full font-medium text-base transition-all duration-300 border-b border-gray-100 text-center', isActive('/') ? 'bg-red-500 text-white' : 'hover:bg-red-500 hover:text-white']"><img src="/images/svg/home.svg" alt="首页图标" class="w-5 h-5" />首页</NuxtLink></li>
+        <li><NuxtLink to="/talk" @click="closeDrawer" :class="['flex gap-2 px-6 py-3 mx-2 rounded-full font-medium text-base transition-all duration-300 border-b border-gray-100 text-center', isActive('/talk') ? 'bg-red-500 text-white' : 'hover:bg-red-500 hover:text-white']"><img src="/images/svg/talk.svg" alt="杂谈图标" class="w-5 h-5" />杂谈</NuxtLink></li>
+        <li><NuxtLink to="/learn" @click="closeDrawer" :class="['flex gap-2 px-6 py-3 mx-2 rounded-full font-medium text-base transition-all duration-300 border-b border-gray-100 text-center', isActive('/learn') ? 'bg-red-500 text-white' : 'hover:bg-red-500 hover:text-white']"><img src="/images/svg/learn.svg" alt="随笔图标" class="w-5 h-5" />随笔</NuxtLink></li>
+        <li><NuxtLink to="/myfriends" @click="closeDrawer" :class="['flex gap-2 px-6 py-3 mx-2 rounded-full font-medium text-base transition-all duration-300 border-b border-gray-100 text-center', isActive('/myfriends') ? 'bg-red-500 text-white' : 'hover:bg-red-500 hover:text-white']"><img src="/images/svg/friend.svg" alt="友人帐图标" class="w-5 h-5" />友人帐</NuxtLink></li>
+        <li><NuxtLink to="/about" @click="closeDrawer" :class="['flex gap-2 px-6 py-3 mx-2 rounded-full font-medium text-base transition-all duration-300 border-b border-gray-100 text-center', isActive('/about') ? 'bg-red-500 text-white' : 'hover:bg-red-500 hover:text-white']"><img src="/images/svg/about.svg" alt="关于我图标" class="w-5 h-5" />关于我</NuxtLink></li>
       </ul>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+
+const route = useRoute()
+const currentPath = computed(() => route.path)
+
+const isActive = (path) => {
+  return currentPath.value === path
+}
 
 const isMobile = ref(false)
 const isDrawerOpen = ref(false)
