@@ -26,8 +26,8 @@
       <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
     </div>
     <div class="w-full px-4 lg:w-[912px] lg:px-0 ">
-      <blogPostCard v-for="learnpost in learnposts" :key="learnpost.id" :title="learnpost.title" :content="learnpost.content" :link="learnpost.link" :image="learnpost.image"/>
-      <blogPostCard v-for="talkpost in talkposts" :key="talkpost.id" :title="talkpost.title" :content="talkpost.content" :link="talkpost.link" :image="talkpost.image"/>
+      <blogPostCard v-for="learnpost in learnposts" :key="learnpost.id" :title="learnpost.title" :content="learnpost.content" :link="learnpost.link" :image="learnpost.image" :date="learnpost.date"/>
+      <blogPostCard v-for="talkpost in talkposts" :key="talkpost.id" :title="talkpost.title" :content="talkpost.content" :link="talkpost.link" :image="talkpost.image" :date="talkpost.date"/>
     </div>
   </div>
 
