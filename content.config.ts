@@ -10,7 +10,8 @@ export default defineContentConfig({
         title: z.string(),
         content: z.string(),
         link: z.string(),
-        image: z.string()
+        image: z.string(),
+        date: z.string()
       })
     }),
     talkpost: defineCollection({
@@ -21,7 +22,8 @@ export default defineContentConfig({
         title: z.string(),
         content: z.string(),
         link: z.string(),
-        image: z.string()
+        image: z.string(),
+        date: z.string()
       })
     }),
     content: defineCollection({

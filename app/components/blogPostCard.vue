@@ -31,7 +31,6 @@ const props = defineProps({
   },
   date: {
     type: String,
-    default: '2026-08-01'
   }
 })
 </script>
