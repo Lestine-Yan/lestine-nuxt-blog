@@ -9,7 +9,7 @@
   </div>
   <div>
     <!-- 脚注 -->
-    <footer class="w-full py-6 bg-white text-black-900">
+    <footer class="w-full py-6 bg-white text-black">
       <div class="container mx-auto px-4 text-center">
         <p class="mb-2">© {{ new Date().getFullYear() }} Lestine Blog. All rights reserved.</p>
         <a href="https://beian.miit.gov.cn/" target="_blank" class="text-black hover:underline">
