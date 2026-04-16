@@ -13,5 +13,5 @@
 
 <script setup lang="ts">
 import blogPostCard from '@/components/blogPostCard.vue'
-const posts = await queryCollection('talkpost').all()
+const posts = (await queryCollection('talkpost').all()).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 </script>
