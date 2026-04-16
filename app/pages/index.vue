@@ -21,12 +21,16 @@
   </div>
   <!--内容部分-->
   <div class="bg-white/70 m-0 p-0 w-[100dvw] md:w-full-no-scrollbar h-auto backdrop-blur-lg flex flex-col items-center justify-center py-8">
-    <div class="mx-auto items-center justify-center flex flex-col">
-      <h2 class="text-2xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Articles</h2>
-      <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
-    </div>
     <div class="w-full px-4 lg:w-[912px] lg:px-0 ">
+      <div class="mx-auto items-center justify-center flex flex-col">
+        <h2 class="text-2xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Articles</h2>
+        <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的学习、生活</p>
+      </div>
       <blogPostCard v-for="learnpost in learnposts" :key="learnpost.id" :title="learnpost.title" :content="learnpost.content" :link="learnpost.link" :image="learnpost.image" :date="learnpost.date"/>
+      <div class="mx-auto items-center justify-center flex flex-col">
+        <h2 class="text-2xl text-red-800 font-bold text-center mb-1" style="font-family: 'Brush Script MT', 'Lucida Calligraphy', 'Edwardian Script ITC', 'Monotype Corsiva', 'French Script MT', 'Segoe Script', cursive;">Talks</h2>
+        <p class="text-xl text-red-800 text-center py-4" style="font-family: 'STXingkai', 'Xingkai SC', 'KaiTi', '楷体', serif;">分享我的闲聊、说说</p>
+      </div>
       <blogPostCard v-for="talkpost in talkposts" :key="talkpost.id" :title="talkpost.title" :content="talkpost.content" :link="talkpost.link" :image="talkpost.image" :date="talkpost.date"/>
     </div>
   </div>
@@ -36,8 +40,8 @@
 
 <script setup>
 import blogPostCard from '@/components/blogPostCard.vue'
-const learnposts = await queryCollection('learnpost').all()
-const talkposts = await queryCollection('talkpost').all()
+const learnposts = (await queryCollection('learnpost').all()).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+const talkposts = (await queryCollection('talkpost').all()).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 </script>
 
 <style scoped>
