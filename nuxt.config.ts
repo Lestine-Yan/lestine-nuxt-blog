@@ -38,8 +38,10 @@ app: {
   ],
 
   nitro: {
-    preset: 'node-server',
+    preset: 'static',
   },
+
+  ssr: true,
 
   $production: {
     devtools: { enabled: false },

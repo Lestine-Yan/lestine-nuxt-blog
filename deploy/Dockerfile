@@ -21,29 +21,16 @@ ENV BETTER_SQLITE3_BINARY_SITE=https://npmmirror.com/mirrors/better-sqlite3 \
 
 RUN pnpm rebuild better-sqlite3
 
-RUN pnpm run build
+RUN pnpm run generate
 
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
-    && apk add --no-cache sqlite-libs
+RUN npm install -g serve
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nuxt
-
-COPY --from=builder /app/.output ./.output
-COPY --from=builder /app/package.json ./package.json
-
-RUN chown -R nuxt:nodejs /app
-
-USER nuxt
+COPY --from=builder /app/.output/public ./public
 
 EXPOSE 3000
 
-ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=3000
-ENV NODE_ENV=production
-
-CMD ["node", ".output/server/index.mjs"]
+CMD ["serve", "-s", "public", "-l", "3000"]
