@@ -23,14 +23,10 @@ RUN pnpm rebuild better-sqlite3
 
 RUN pnpm run generate
 
-FROM node:20-alpine AS runner
+FROM nginx:alpine AS runner
 
-WORKDIR /app
+COPY --from=builder /app/.output/public /usr/share/nginx/html
 
-RUN npm install -g serve
+EXPOSE 80
 
-COPY --from=builder /app/.output/public ./public
-
-EXPOSE 3000
-
-CMD ["serve", "-s", "public", "-l", "3000"]
+CMD ["nginx", "-g", "daemon off;"]
