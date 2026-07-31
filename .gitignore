@@ -19,10 +19,6 @@ logs
 .idea
 .obsidian
 
-#静态资源
-public/*
-content/*
-
 # Local env files
 .env
 .env.*
