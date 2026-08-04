@@ -1,14 +1,13 @@
-h1 {
-    font-family: "STXingkai", "Xingkai SC", "KaiTi", "楷体", serif;
-    letter-spacing: 0.15em;
-    color: #991b1b;
-    }
-h2 {
-    font-family: "STXingkai", "Xingkai SC", "KaiTi", "楷体", serif;
-    letter-spacing: 0.1em;
-    color: #991b1b;
+/* 站酷快乐体（ZCOOL KuaiLe）- 自托管字体，全站默认字体族 */
+@font-face {
+    font-family: 'ZCOOL KuaiLe';
+    src: url('./fonts/ZCOOLKuaiLe.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
-p {
-    font-family: "STXingkai", "Xingkai SC", "KaiTi", "楷体", serif;
-    color: #991b1b;
+
+/* 全站默认字体：站酷快乐体；加载失败时回退到各平台中文系统字体，保证可读 */
+body {
+    font-family: 'ZCOOL KuaiLe', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
 }
