@@ -32,6 +32,8 @@ app: {
     }
   },
 
+  css: ['~/assets/fontstyle.css'],
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxt/content',

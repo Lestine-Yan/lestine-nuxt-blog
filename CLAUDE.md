@@ -18,7 +18,7 @@ Nuxt 4 directory layout — application code lives under `app/`:
 - `app/pages/` — File-based routing: `index.vue` (home), `learn/index.vue`, `talk/index.vue`, `myfriends/index.vue`, `about/index.vue`, and `[...slug].vue` (catch-all dynamic route for markdown content).
 - `app/components/` — `navbar.vue`, `blogPostCard.vue`, `friendCard.vue`, and `content/Prose*.vue` (24 custom overrides for every markdown element rendered by `<ContentRenderer>`).
 - `app/layouts/default.vue` — Default layout.
-- `app/assets/` — `animates.css` (slide-down / fade-up keyframe animations) and `fontstyle.css` (STXingkai/KaiTi font family, red `#991b1b` for h1/h2/p).
+- `app/assets/` — `animates.css` (slide-down / fade-up keyframe animations), `fontstyle.css` (global font: self-hosted 站酷快乐体 / ZCOOL KuaiLe via `@font-face` + `body` font-family, registered globally in `nuxt.config.ts` `css`), and `fonts/ZCOOLKuaiLe.ttf` (the self-hosted web font, ~1.5 MB, tracked in git).
 - `app/data/friendLink.ts` — Friend-link data source for `/myfriends`.
 - `content.config.ts` — Defines the three `@nuxt/content` collections.
 - `content/` — Markdown source for posts (`learnpost/*.md`, `talkpost/*.md`). **Note: both `content/` and `public/` are gitignored** (see Security & Configuration Tips).
@@ -77,8 +77,8 @@ Dynamic routes are pre-rendered; Nuxt discovers their paths automatically from t
 
 ### Styling
 
-- **TailwindCSS** via `@nuxtjs/tailwindcss`. `tailwind.config.js` extends the theme with a custom width utility `w-full-no-scrollbar` (`calc(100dvw - 8px)`) to account for scrollbar width.
-- **Custom CSS** in `app/assets/animates.css` (slide-down, fade-up keyframes) and `app/assets/fontstyle.css` (STXingkai/KaiTi font family, red `#991b1b` for h1/h2/p).
+- **TailwindCSS** via `@nuxtjs/tailwindcss`. `tailwind.config.js` extends the theme with `fontFamily.sans` set to 站酷快乐体 (ZCOOL KuaiLe) so Preflight applies it site-wide, plus a custom width utility `w-full-no-scrollbar` (`calc(100dvw - 8px)`) to account for scrollbar width. The `content` glob includes `vue`.
+- **Global font** 站酷快乐体 (ZCOOL KuaiLe) is self-hosted: `app/assets/fontstyle.css` defines `@font-face` (loading `./fonts/ZCOOLKuaiLe.ttf` with `font-display: swap`) and sets `body { font-family }` with a CJK fallback stack (`PingFang SC`, `Microsoft YaHei`, `system-ui`); it is registered globally via `nuxt.config.ts` `css: ['~/assets/fontstyle.css']`. List-page heading color/letter-spacing use Tailwind classes (`text-red-800` = `#991b1b`, `tracking-[0.15em]`) instead of the old per-page `@import`. `app/assets/animates.css` holds slide-down/fade-up keyframes (still per-page `@import`ed where needed).
 - **Background** `bg-[url('/images/example-app-bg.png')]` and custom scrollbar styling are applied globally in `app/app.vue`.
 
 ### SSG configuration
