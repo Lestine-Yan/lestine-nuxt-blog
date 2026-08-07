@@ -14,9 +14,9 @@ This is a **pre-rendered static site** — `nuxt.config.ts` sets `ssr: true` wit
 
 Nuxt 4 directory layout — application code lives under `app/`:
 
-- `app/app.vue` — Root component: applies the global background image, wraps `<NuxtLayout><NuxtPage /></NuxtLayout>`, and defines global scrollbar styles.
+- `app/app.vue` — Root component: renders `<SiteBackground />` (global background), wraps `<NuxtLayout><NuxtPage /></NuxtLayout>`, and defines global scrollbar styles.
 - `app/pages/` — File-based routing: `index.vue` (home), `learn/index.vue`, `talk/index.vue`, `myfriends/index.vue`, `about/index.vue`, and `[...slug].vue` (catch-all dynamic route for markdown content).
-- `app/components/` — `navbar.vue`, `blogPostCard.vue`, `friendCard.vue`, and `content/Prose*.vue` (24 custom overrides for every markdown element rendered by `<ContentRenderer>`).
+- `app/components/` — `navbar.vue`, `blogPostCard.vue`, `friendCard.vue`, `siteBackground.vue` (global decorative background: SVG coordinate axes + Canvas pig trajectories), and `content/Prose*.vue` (24 custom overrides for every markdown element rendered by `<ContentRenderer>`).
 - `app/layouts/default.vue` — Default layout.
 - `app/assets/` — `animates.css` (slide-down / fade-up keyframe animations), `fontstyle.css` (global font: self-hosted 站酷快乐体 / ZCOOL KuaiLe via `@font-face` + `body` font-family, registered globally in `nuxt.config.ts` `css`), and `fonts/ZCOOLKuaiLe.ttf` (the self-hosted web font, ~1.5 MB, tracked in git).
 - `app/data/friendLink.ts` — Friend-link data source for `/myfriends`.
@@ -79,7 +79,10 @@ Dynamic routes are pre-rendered; Nuxt discovers their paths automatically from t
 
 - **TailwindCSS** via `@nuxtjs/tailwindcss`. `tailwind.config.js` extends the theme with `fontFamily.sans` set to 站酷快乐体 (ZCOOL KuaiLe) so Preflight applies it site-wide, plus a custom width utility `w-full-no-scrollbar` (`calc(100dvw - 8px)`) to account for scrollbar width. The `content` glob includes `vue`.
 - **Global font** 站酷快乐体 (ZCOOL KuaiLe) is self-hosted: `app/assets/fontstyle.css` defines `@font-face` (loading `./fonts/ZCOOLKuaiLe.ttf` with `font-display: swap`) and sets `body { font-family }` with a CJK fallback stack (`PingFang SC`, `Microsoft YaHei`, `system-ui`); it is registered globally via `nuxt.config.ts` `css: ['~/assets/fontstyle.css']`. List-page heading color/letter-spacing use Tailwind classes (`text-red-800` = `#991b1b`, `tracking-[0.15em]`) instead of the old per-page `@import`. `app/assets/animates.css` holds slide-down/fade-up keyframes (still per-page `@import`ed where needed).
-- **Background** `bg-[url('/images/example-app-bg.png')]` and custom scrollbar styling are applied globally in `app/app.vue`.
+- **Background** is a fixed, full-viewport decorative layer rendered by `app/components/siteBackground.vue` (mounted in `app/app.vue`), `pointer-events:none`, `z-index:-1`, white base. It has two stacked sub-layers:
+  - **SVG coordinate axes** (inline `<svg>`, SSR-safe): a 4-quadrant 2D axis centered at the viewport center — the x/y axes are long dashed lines (`stroke-dasharray="16 10"`, color `#AC9EE5`), and along the `y=x` / `y=-x` diagonals a perpendicular dropped from the point to each axis (vertical to the x-axis, horizontal to the y-axis), forming a lighter dashed grid (`stroke-dasharray="4 6"`, `stroke-opacity:0.55`) is drawn every 5% of viewport height. The whole axis group breathes via a CSS `@keyframes` opacity animation (`0.95 ↔ 0.35`, 7s, scoped to the component).
+  - **Canvas pig trajectories** (client-only, `requestAnimationFrame`): ~12 pigs (`/pigs/pigrun.webp`, pixelated) each follow one of five parametric curves — 玫瑰线 (rose), 心形线 (cardioid), 双纽线 (lemniscate), 星形线 (astroid, all closed loops), or 对数螺线 (logarithmic spiral, open). Each leaves a dashed trail (`#AC9EE5`, `setLineDash`) that fades by age (retention ~2.6s, alpha-banded) and is pruned by length. Pigs are seeded-pseudo-randomly distributed across the viewport (overlap allowed) and mirror to face their travel direction. Any pig about to leave the viewport (or, for the spiral, breaching its r bounds) reverses direction (`dir *= -1`). DPR-aware; pauses on tab hide; respects `prefers-reduced-motion` (static single frame). The canvas is transparent and sits above the SVG axes.
+  - Custom scrollbar styling remains global in `app/app.vue`.
 
 ### SSG configuration
 
