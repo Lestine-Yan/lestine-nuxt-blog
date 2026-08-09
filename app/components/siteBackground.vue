@@ -1,39 +1,87 @@
 <template>
   <div class="bg-layer" aria-hidden="true">
-    <!-- 坐标轴层：以视窗中心为原点的四象限二维坐标轴 + 沿 y=x/-x 的短十字刻度，整体 CSS 呼吸 -->
+    <!-- 坐标轴层：以视窗中心为原点的四象限坐标轴 + 固定像素正方形网格 + 全交点小圆点 + 刻度数字，整体 CSS 呼吸 -->
     <svg class="axes" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
       <g class="axes-breathe" :class="{ 'no-anim': reduceMotion }">
-        <!-- x / y 轴：较长虚线，保留原色 #AC9EE5 -->
-        <line class="axis" x1="0" y1="50%" x2="100%" y2="50%" />
-        <line class="axis" x1="50%" y1="0" x2="50%" y2="100%" />
-        <!-- 沿 y=x / y=-x，y 值每隔 5% 视窗取点，从该点向 x/y 轴作垂线（竖直到 x 轴 + 水平到 y 轴），构成网格 -->
-        <g v-for="(t, i) in ticks" :key="i">
-          <line class="tick" :x1="`${t.x}%`" :y1="`${t.y}%`" :x2="`${t.x}%`" y2="50%" />
-          <line class="tick" :x1="`${t.x}%`" :y1="`${t.y}%`" x2="50%" :y2="`${t.y}%`" />
+        <g v-if="grid">
+          <!-- 非轴网格线：固定 64px 间距，较淡虚线 -->
+          <line v-for="l in grid.vlines" :key="`v${l.k}`" class="grid" :x1="l.x" :y1="0" :x2="l.x" :y2="viewH" />
+          <line v-for="l in grid.hlines" :key="`h${l.k}`" class="grid" :x1="0" :y1="l.y" :x2="viewW" :y2="l.y" />
+          <!-- x / y 轴：k=0 两条加重虚线，保留原色 #AC9EE5 -->
+          <line class="axis" :x1="0" :y1="grid.cy" :x2="viewW" :y2="grid.cy" />
+          <line class="axis" :x1="grid.cx" :y1="0" :x2="grid.cx" :y2="viewH" />
+          <!-- 全部网格交点：深色小圆点（仅比虚线宽略大） -->
+          <circle v-for="(d, i) in grid.dots" :key="`d${i}`" class="dot" :cx="d.x" :cy="d.y" :r="DOT_R" />
+          <!-- x 轴刻度数字：居中，置于 x 轴下方 -->
+          <text v-for="(lb, i) in grid.xLabels" :key="`xl${i}`" class="label" :x="lb.x" :y="grid.cy + 14" text-anchor="middle">{{ lb.text }}</text>
+          <!-- y 轴刻度数字：右对齐，置于 y 轴左侧（向上为正） -->
+          <text v-for="(lb, i) in grid.yLabels" :key="`yl${i}`" class="label" :x="grid.cx - 8" :y="lb.y + 3" text-anchor="end">{{ lb.text }}</text>
         </g>
       </g>
     </svg>
+    <!-- 飘浮符号层：数学符号/希腊字符，左下->右上慢飘 + 自旋 + 左右轻摆，越界回收补新 -->
+    <svg class="symbols" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <g v-for="sym in symbols" :key="sym.id"
+         class="symbol-drift"
+         :style="driftStyle(sym)">
+        <g class="symbol-sway" :style="swayStyle(sym)">
+          <text class="symbol-spin" :style="spinStyle(sym)">{{ sym.char }}</text>
+        </g>
+      </g>
+    </svg>
+    <!-- 顶部装饰：blopigbg 置于 SVG 网格层上方、Canvas 小猪层下方 -->
+    <img class="blopig-bg" src="/pigs/blopigbg.webp" alt="" aria-hidden="true" />
     <!-- 小猪 + 尾迹层：参数曲线轨迹 + 虚线尾迹，Canvas rAF 绘制 -->
     <canvas ref="cv" class="pig-canvas"></canvas>
   </div>
 </template>
 
 <script setup>
-// ---- 对角刻度点（纯百分比，SSR 安全）----
-// 沿 y=x 与 y=-x，y 值每隔 5% 视窗取一个点；过滤超出 [0,100] 的点
-const ticks = []
-for (let k = 1; k <= 10; k++) {
-  for (const x of [50 + 5 * k, 50 - 5 * k]) {
-    for (const y of [50 + 5 * k, 50 - 5 * k]) {
-      if (x >= 0 && x <= 100 && y >= 0 && y <= 100) ticks.push({ x, y })
-    }
+// ---- 坐标轴网格参数 ----
+const GRID_PX = 64        // 正方形网格单元格边长（固定像素）
+const LABEL_EVERY = 2     // 每 N 格标一个刻度数字（轴末端始终标注）
+const DOT_R = 2           // 网格交点小圆点半径（仅比 1px 虚线宽略大）
+
+// 视窗尺寸：客户端测量后赋值，驱动网格响应式重算
+const viewW = ref(0)
+const viewH = ref(0)
+
+// ---- 正方形网格（以视窗中心为原点的四象限坐标）----
+// 由 viewW/viewH 派生：网格线 / 轴线 / 全交点圆点 / 刻度数字。
+// 初始 viewW=viewH=0 -> 返回 null -> SSR 与客户端首帧均不渲染，避免 hydration 不匹配。
+const grid = computed(() => {
+  const W = viewW.value, H = viewH.value
+  if (!W || !H) return null
+  const cx = W / 2, cy = H / 2
+  const vlines = [], hlines = [], xLabels = [], yLabels = []
+  // k 的有效范围：cx + k*GRID_PX 落在 [0, W] / [0, H] 内
+  const kMinX = Math.ceil(-cx / GRID_PX), kMaxX = Math.floor((W - cx) / GRID_PX)
+  const kMinY = Math.ceil(-cy / GRID_PX), kMaxY = Math.floor((H - cy) / GRID_PX)
+  const labeled = k => k === 0 || k % LABEL_EVERY === 0
+  for (let k = kMinX; k <= kMaxX; k++) {
+    const x = cx + k * GRID_PX
+    if (k !== 0) vlines.push({ x, k })                       // k=0 为 y 轴，单独绘制
+    if (labeled(k) || k === kMinX || k === kMaxX) xLabels.push({ x, text: String(k) })
   }
-}
+  for (let k = kMinY; k <= kMaxY; k++) {
+    const y = cy + k * GRID_PX
+    if (k !== 0) hlines.push({ y, k })                       // k=0 为 x 轴，单独绘制
+    // y 轴向上为正（数学坐标系）：刻度文字取 -k
+    if (labeled(k) || k === kMinY || k === kMaxY) yLabels.push({ y, text: String(-k) })
+  }
+  // 全部网格交点（含坐标轴上的交点）
+  const allX = vlines.map(v => v.x).concat(cx)
+  const allY = hlines.map(h => h.y).concat(cy)
+  const dots = []
+  for (const x of allX) for (const y of allY) dots.push({ x, y })
+  return { cx, cy, vlines, hlines, dots, xLabels, yLabels }
+})
+
 const cv = ref(null)
 const reduceMotion = ref(false)
 
 // ---- 可调常量 ----
-const PIG_COUNT = 12
+const PIG_COUNT = 8
 const T_RETAIN = 2600      // 尾迹保留时长（ms）
 const MAX_TRAIL = 300      // 单只小猪尾迹最大点数
 const TRAIL_BANDS = 8      // 尾迹透明度分桶数（实现逐渐消失）
@@ -214,12 +262,19 @@ function frame() {
     drawTrail(p)
     drawPig(p)
   }
+  // 飘浮符号到期回收：到 expireAt 即替换为新符号（新 id -> Vue 重建节点 -> 飘行动画从头播放，从左下出生）
+  const syms = symbols.value
+  for (let i = 0; i < syms.length; i++) {
+    if (now >= syms[i].expireAt) syms[i] = makeSymbol(false, now)
+  }
   rafId = requestAnimationFrame(frame)
 }
 
 function setupCanvas() {
   W = cv.value.clientWidth
   H = cv.value.clientHeight
+  viewW.value = W
+  viewH.value = H
   dpr = Math.min(window.devicePixelRatio || 1, 2)
   cv.value.width = Math.round(W * dpr)
   cv.value.height = Math.round(H * dpr)
@@ -242,10 +297,86 @@ function onVisibility() {
   }
 }
 
+// ---- 飘浮符号：数学符号/希腊字符，左下->右上慢飘 + 自旋 + 左右轻摆，越界回收补新 ----
+const SYMBOL_COUNT = 5        // 同时存在的符号数（"几个"）
+const SYMBOLS = [
+  // 希腊小写
+  'α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','π','ρ','σ','τ','υ','φ','χ','ψ','ω',
+  // 希腊大写
+  'Α','Δ','Σ','Ω','Π','Φ','Ψ','Γ','Λ','Θ',
+  // 数学符号
+  '∑','∏','∫','∂','∇','∞','√','≈','≠','≤','≥','∈','∉','∋','∪','∩','⊂','⊃','∀','∃','∅','∝','±','×','÷','∴','∵','≡','≅','⇒','⇔','->','←','↔','∠','⊥','∥','≪','≫','∘','⋅','⊕','⊗','ℝ','ℕ','ℤ','ℚ','ℂ'
+]
+
+const symbols = ref([])           // 活跃符号列表（SSR/首帧为空，onMounted 后填充）
+let symbolId = 0
+const symRng = makeRng(20260809)   // 独立种子，与小猪布局解耦
+
+// 生成一个符号配置；initial=true 时带负延迟，使首屏即处于飘行中段（不全堆左下角）
+// now 为生成时刻（performance.now()），用于计算到期回收时间戳 expireAt
+function makeSymbol(initial, now) {
+  const driftDur = 22 + symRng() * 14
+  const delay = initial ? -(symRng() * driftDur * 0.85) : 0
+  return {
+    id: ++symbolId,
+    char: SYMBOLS[Math.floor(symRng() * SYMBOLS.length)],
+    startX: -60 + symRng() * (W * 0.4 + 60),      // 左下，略出屏飘入
+    startY: H * 0.85 + symRng() * (H * 0.15 + 80),
+    endX: W * 0.7 + symRng() * (W * 0.3 + 80),    // 右上，飘出屏
+    endY: -80 + symRng() * (H * 0.15 + 80),
+    driftDur,                                      // 22–36s 慢飘
+    sway: 18 + symRng() * 34,                      // 18–52px 摆幅
+    swayDur: 4 + symRng() * 4,                     // 4–8s 半周期
+    spinDur: 8 + symRng() * 10,                    // 8–18s 自转一圈
+    spinDir: symRng() > 0.5 ? 1 : -1,
+    size: 18 + symRng() * 20,                      // 18–38px 字号
+    color: symRng() > 0.5 ? '#AC9EE5' : '#7E6AD0',
+    maxOpacity: 0.45 + symRng() * 0.25,            // 0.45–0.7
+    delay,                                         // CSS animation-delay（initial 为负）
+    expireAt: now + (driftDur + delay) * 1000,     // 到期回收时间戳（ms）
+  }
+}
+
+function driftStyle(sym) {
+  return {
+    '--start-x': sym.startX + 'px',
+    '--start-y': sym.startY + 'px',
+    '--end-x': sym.endX + 'px',
+    '--end-y': sym.endY + 'px',
+    '--max-opacity': sym.maxOpacity,
+    animationDuration: sym.driftDur + 's',
+    animationDelay: sym.delay + 's',
+  }
+}
+
+function swayStyle(sym) {
+  return {
+    '--sway': sym.sway + 'px',
+    animationDuration: sym.swayDur + 's',
+  }
+}
+
+function spinStyle(sym) {
+  return {
+    '--sym-color': sym.color,
+    fontSize: sym.size + 'px',
+    animationName: sym.spinDir > 0 ? 'spin-cw' : 'spin-ccw',
+    animationDuration: sym.spinDur + 's',
+  }
+}
+
+// 飘浮符号到期回收在 rAF 主循环 frame() 里按 expireAt 时间戳判定（确定性触发，
+// 不依赖 animationend 事件；与 CSS 动画共享暂停/恢复语义）
+
 onMounted(() => {
   reduceMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ctx = cv.value.getContext('2d')
   setupCanvas()
+  // 飘浮符号初始化（reduce-motion 下不生成）
+  if (!reduceMotion.value) {
+    const now = performance.now()
+    symbols.value = Array.from({ length: SYMBOL_COUNT }, () => makeSymbol(true, now))
+  }
   pigs = buildPigs()
   layoutPigs()
   img = new Image()
@@ -305,12 +436,35 @@ onBeforeUnmount(() => {
   stroke-opacity: 0.9;
 }
 
-.tick {
+.grid {
   fill: none;
   stroke: #ac9ee5;
   stroke-width: 1;
   stroke-dasharray: 4 6;
-  stroke-opacity: 0.55;
+  stroke-opacity: 0.4;
+}
+
+.dot {
+  fill: #7e6ad0;
+  fill-opacity: 0.55;
+}
+
+.label {
+  fill: #ac9ee5;
+  fill-opacity: 0.7;
+  font-size: 10px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.blopig-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
 }
 
 .pig-canvas {
@@ -319,6 +473,62 @@ onBeforeUnmount(() => {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* ---- 飘浮符号层 ---- */
+.symbols {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* 外层：左下->右上主飘行 + 淡入淡出；duration/delay 由内联样式按符号注入 */
+.symbol-drift {
+  animation-name: drift;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* 中层：左右轻摆（叶子感）；duration 由内联注入 */
+.symbol-sway {
+  animation-name: sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+/* 内层：自旋；name(cw/ccw)/duration/颜色/字号由内联注入 */
+.symbol-spin {
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--sym-color);
+  font-family: 'Cambria Math', 'Segoe UI Symbol', 'Times New Roman', Georgia, serif;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes drift {
+  0%   { transform: translate(var(--start-x), var(--start-y)); opacity: 0; }
+  12%  { opacity: var(--max-opacity); }
+  82%  { opacity: var(--max-opacity); }
+  100% { transform: translate(var(--end-x), var(--end-y)); opacity: 0; }
+}
+
+@keyframes sway {
+  from { transform: translateX(calc(var(--sway) * -1)); }
+  to   { transform: translateX(var(--sway)); }
+}
+
+@keyframes spin-cw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes spin-ccw {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
 }
 
 @keyframes axes-breathe {
