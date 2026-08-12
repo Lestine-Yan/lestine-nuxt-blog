@@ -36,11 +36,29 @@ app: {
 
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxt/content',
+    '@nuxtjs/mdc',
   ],
 
   nitro: {
     preset: 'static',
+  },
+
+  // Margaret API 基础路径：相对 /api/v1（生产由 Nginx 反代，dev 由下方 routeRules.proxy 转发）
+  // 可用 NUXT_PUBLIC_MARGARET_API_BASE 覆盖
+  runtimeConfig: {
+    public: {
+      margaretApiBase: '/api/v1',
+    },
+  },
+
+  // dev：/api/ 代理到 Margaret，目标地址走 MARGARET_API_TARGET 环境变量（见 .env，不提交仓库）；生产由 Nginx 反代
+  routeRules: {
+    // 杂谈已合并入随笔，旧链接重定向到 /learn
+    '/talk': { redirect: '/learn' },
+    '/talk/**': { redirect: '/learn' },
+    ...(process.env.MARGARET_API_TARGET
+      ? { '/api/**': { proxy: process.env.MARGARET_API_TARGET } }
+      : {}),
   },
 
   ssr: true,
