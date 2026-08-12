@@ -9,7 +9,7 @@
   </div>
   <div>
     <!-- 脚注 -->
-    <footer class="w-full py-6 bg-white text-black">
+    <footer class="w-full py-6 bg-transparent text-black">
       <div class="container mx-auto px-4 text-center">
         <p class="mb-2">© {{ new Date().getFullYear() }} Lestine Blog. All rights reserved.</p>
         <div class="flex justify-center items-center">
