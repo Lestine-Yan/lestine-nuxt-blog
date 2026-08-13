@@ -1,5 +1,5 @@
 <template>
-  <li class="text-gray-900 leading-relaxed">
+  <li class="leading-[1.8] pl-1">
     <slot />
   </li>
 </template>

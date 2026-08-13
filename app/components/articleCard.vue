@@ -1,6 +1,6 @@
 <template>
   <NuxtLink :to="`/learn/${article.slug}`" class="block group">
-    <div class="flex items-center gap-4 md:gap-6 p-4 md:p-5 rounded-xl transition-colors duration-300 group-hover:bg-[#FBF5FE]">
+    <div class="flex items-center gap-4 md:gap-6 p-4 md:p-5 rounded-xl transition-colors duration-300 group-hover:bg-[#FBF5FE]/70">
       <!-- 左：标题 / 时间·分类 / 摘要 -->
       <div class="flex-1 min-w-0">
         <h2 class="text-lg md:text-xl font-bold text-[#7E6AD0] mb-1.5 line-clamp-1">{{ article.title }}</h2>

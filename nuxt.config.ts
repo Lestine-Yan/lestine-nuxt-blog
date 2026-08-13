@@ -39,6 +39,19 @@ app: {
     '@nuxtjs/mdc',
   ],
 
+  // 代码块语法高亮（Shiki）。文章正文由 Margaret API 客户端拉取（server:false），
+  // 故高亮在客户端进行：parseMarkdown -> rehype-highlight -> 客户端 #mdc-highlighter。
+  // noApiRoute: 静态站点无 Nitro 运行时，跳过 /api/_mdc/highlight 直连客户端高亮器（避免 404 回退）；
+  // shikiEngine: 'javascript' 纯 JS 正则引擎，免 oniguruma WASM，适配国内静态部署。
+  // theme 仅决定 token 颜色；代码块底色由 ProsePre 自身控制（wrapperStyle 默认 false）。
+  mdc: {
+    highlight: {
+      theme: 'github-dark',
+      noApiRoute: true,
+      shikiEngine: 'javascript',
+    },
+  },
+
   nitro: {
     preset: 'static',
   },

@@ -1,6 +1,6 @@
 <template>
-  <div class="overflow-x-auto my-6">
-    <table class="min-w-full border border-red-800 rounded-lg overflow-hidden">
+  <div class="my-6 overflow-x-auto rounded-xl border border-[#7E6AD0]/15 shadow-sm">
+    <table class="min-w-full text-sm">
       <slot />
     </table>
   </div>
