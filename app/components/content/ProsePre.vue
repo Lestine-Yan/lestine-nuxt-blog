@@ -1,13 +1,10 @@
 <template>
-  <div class="relative my-6">
-    <div v-if="filename" class="bg-gray-700 text-gray-200 text-sm px-4 py-2 rounded-t-lg border-b border-gray-600">
+  <div class="relative my-6 rounded-xl overflow-hidden border border-[#7E6AD0]/15 shadow-sm">
+    <div v-if="filename" class="bg-[#352D48] text-[#AC9EE5] text-xs font-mono px-4 py-2 border-b border-[#2A2438]">
       {{ filename }}
     </div>
-    <pre :class="[
-      'overflow-x-auto p-4 text-sm leading-relaxed',
-      filename ? 'rounded-b-lg' : 'rounded-lg',
-      'bg-gray-900 text-gray-100'
-    ]" :language="language"><slot /></pre>
+    <!-- :class="class" 承载 Shiki 注入的 shiki 类，使 html .shiki span{color:var(--shiki-default)} 生效 -->
+    <pre class="overflow-x-auto p-4 text-sm leading-relaxed font-mono bg-[#2A2438] text-[#E8E4F5]" :class="class" :language="language"><slot /></pre>
   </div>
 </template>
 
@@ -32,6 +29,17 @@ defineProps({
   meta: {
     type: String,
     default: undefined
+  },
+  class: {
+    type: String,
+    default: undefined
   }
 })
 </script>
+
+<style scoped>
+/* Shiki 按行输出 <span class="line">，需块级显示以正确换行 */
+:deep(.line) {
+  display: block;
+}
+</style>

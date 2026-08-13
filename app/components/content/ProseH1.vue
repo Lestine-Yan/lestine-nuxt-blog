@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-4xl font-bold text-gray-900 mt-8 mb-4 leading-tight text-center">
+  <h1 class="text-3xl md:text-4xl font-bold text-[#7E6AD0] mt-10 mb-5 leading-tight tracking-wide">
     <slot />
   </h1>
 </template>
