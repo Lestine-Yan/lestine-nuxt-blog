@@ -71,8 +71,8 @@ const pageList = computed<(number | string)[]>(() => {
 
 function filterBtnClass(active: boolean) {
   return active
-    ? 'px-4 py-1.5 rounded-full bg-[#7E6AD0] text-white text-sm transition'
-    : 'px-4 py-1.5 rounded-full bg-white/60 text-[#7E6AD0] text-sm border border-[#7E6AD0]/30 hover:bg-[#FBF5FE] transition'
+    ? 'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 bg-[#FBF5FE] text-[#7E6AD0]'
+    : 'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 text-black hover:bg-[#FBF5FE] hover:text-[#7E6AD0]'
 }
 function pageBtnClass(active: boolean) {
   return active

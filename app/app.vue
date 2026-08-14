@@ -14,6 +14,7 @@
 html {
   overflow-y: auto;
   scrollbar-gutter: stable;
+  scrollbar-color: rgba(126, 106, 208, 0.5) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -26,11 +27,16 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(127, 29, 29, 0.5);
+  background: rgba(126, 106, 208, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(127, 29, 29, 0.8);
+  background: rgba(126, 106, 208, 0.8);
+}
+
+/* 鼠标选中文本：淡紫底，字体颜色保持不变 */
+::selection {
+  background: #F3DCFF;
 }
 </style>
