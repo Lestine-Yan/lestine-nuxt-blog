@@ -4,7 +4,8 @@ WORKDIR /app
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# 钉死 pnpm 版本：pnpm 11+ 要求 Node >= 22.13 且依赖 node:sqlite，与 node:20-alpine 不兼容
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 
 COPY package.json pnpm-lock.yaml ./
 
