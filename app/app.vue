@@ -6,6 +6,8 @@
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <!-- 全局音乐播放浮窗（左下角，见 components/musicPlayer.vue） -->
+    <MusicPlayer />
   </div>
 </template>
 

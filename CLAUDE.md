@@ -14,14 +14,15 @@ This is a **pre-rendered static site** - `nuxt.config.ts` sets `ssr: true` with 
 
 Nuxt 4 directory layout - application code lives under `app/`:
 
-- `app/app.vue` - Root component: renders `<SiteBackground />` (global background), wraps `<NuxtLayout><NuxtPage /></NuxtLayout>`, and defines global scrollbar styles.
-- `app/pages/` - File-based routing: `index.vue` (home), `learn.vue` (parent: `windowFrame` + `<NuxtPage />`, wide/narrow switches by route), `learn/index.vue` (随笔 list), `learn/[slug].vue` (随笔 detail - fetches Margaret API + `parseMarkdown` + `markdownRenderer`), `myfriends/index.vue`, `about/index.vue`, and `[...slug].vue` (catch-all -> 404 page; local markdown has migrated to Margaret). `/talk` and `/talk/**` are redirected to `/learn` via `routeRules`.
+- `app/app.vue` - Root component: renders `<SiteBackground />` (global background), wraps `<NuxtLayout><NuxtPage /></NuxtLayout>`, mounts `<MusicPlayer />` (global bottom-left music widget), and defines global scrollbar styles.
+- `app/pages/` - File-based routing: `index.vue` (home), `learn.vue` (parent: `windowFrame` + `<NuxtPage />`, wide/narrow switches by route), `learn/index.vue` (随笔 list), `learn/[slug].vue` (随笔 detail - fetches Margaret API + `parseMarkdown` + `markdownRenderer`), `music/[id].vue` (歌曲感想 detail - same pipeline on the `write` field, numeric id), `myfriends/index.vue`, `about/index.vue`, and `[...slug].vue` (catch-all -> 404 page; local markdown has migrated to Margaret). `/talk` and `/talk/**` are redirected to `/learn` via `routeRules`.
 - `app/components/` - `navbar.vue`, `friendCard.vue`, `articleCard.vue` (随笔 list card, links to `/learn/<slug>`), `markdownRenderer.vue` (renders the `parseMarkdown` AST via `@nuxtjs/mdc`'s `MDCRenderer` with `:prose="false"`, explicitly mapping the 24 `Prose*.vue`), `windowFrame.vue` (content card container `#FDFDF2`, wide for list / narrow for detail with smooth width transition), `siteBackground.vue` (global background: SVG coordinate axes + SVG floating math/Greek symbols + Canvas pig trajectories), and `content/Prose*.vue` (24 custom overrides for every markdown element rendered by `MDCRenderer`; styled in the site's purple theme, e.g. `ProseA` is purple with a color-shift hover and **no underline**).
 - `app/layouts/default.vue` - Default layout (navbar + `<NuxtPage />` + footer with ICP/公安备案).
-- `app/assets/` - `animates.css` (slide-down / fade-up keyframe animations), `fontstyle.css` (global font: self-hosted 站酷快乐体 / ZCOOL KuaiLe via `@font-face` + `body` font-family, registered globally in `nuxt.config.ts` `css`), and `fonts/ZCOOLKuaiLe.ttf` (the self-hosted web font, ~1.5 MB, tracked in git).
-- `app/composables/useMargaret.ts` - Margaret API client composables (`useArticles` / `useArticle` / `useCategories`), all `server: false` (client-side fetch).
-- `app/types/margaret.ts` - Margaret API types (`ApiResponse<T>` / `Paginated<T>` / `ArticleListItem` / `Article`).
-- `app/utils/formatDate.ts` - RFC3339 -> `YYYY-MM-DD` date formatting (auto-imported).
+- `app/assets/` - `animates.css` (slide-down / fade-up / disc-spin / pop-up keyframe animations, with a `prefers-reduced-motion` guard for the latter two), `fontstyle.css` (global font: self-hosted 站酷快乐体 / ZCOOL KuaiLe via `@font-face` + `body` font-family, registered globally in `nuxt.config.ts` `css`), and `fonts/ZCOOLKuaiLe.ttf` (the self-hosted web font, ~1.5 MB, tracked in git).
+- `app/composables/useMargaret.ts` - Margaret API client composables (`useArticles` / `useArticle` / `useCategories` / `useSongs` / `useSong`), all `server: false` (client-side fetch).
+- `app/composables/usePlayer.ts` - Global music player singleton store (playlist, single `HTMLAudioElement`, play state, localStorage persistence; playlist data injected via `setPlaylist()` by `musicPlayer.vue`).
+- `app/types/margaret.ts` - Margaret API types (`ApiResponse<T>` / `Paginated<T>` / `ArticleListItem` / `Article` / `SongListItem` / `Song` / `SongListResult`).
+- `app/utils/formatDate.ts` - RFC3339 -> `YYYY-MM-DD` date formatting (auto-imported); `app/utils/formatDuration.ts` - seconds -> `m:ss`; `app/utils/songCover.ts` - song cover fallback (`cover_url || embedded_cover_url || /images/svg/disc.svg`).
 - `app/data/friendLink.ts` - Friend-link data source for `/myfriends`.
 - `public/` - Static assets: favicon/icon set, `manifest.json`, `robots.txt`, `browserconfig.xml`, and `images/` (background, post images, SVG icons).
 - `deploy/` - `Dockerfile`, `docker-compose.yml`, `deploy.sh`, `.dockerignore`.
@@ -53,10 +54,20 @@ Articles (随笔) live in the **Margaret API** (a separate backend), not in this
 - `useArticles(page, pageSize, category)` -> `GET /articles` (paginated, filterable by category, time desc)
 - `useArticle(slug)` -> `GET /articles/:slug` (returns the Markdown `content`)
 - `useCategories()` -> `GET /categories`
+- `useSongs()` -> `GET /songs` (full list, NOT paginated - `{ items, total }`, no page/page_size; each item carries the absolute audio `url` on irisImg)
+- `useSong(id)` -> `GET /songs/:id` (numeric id, Song has no slug; returns the Markdown `write` 感想)
 
 All composables use `server: false` (client-side only). In dev, `/api/` is proxied to Margaret via `routeRules` (`MARGARET_API_TARGET` env, see `.env`); in production the host Nginx reverse-proxies `/api/` to Margaret.
 
 Article detail (`learn/[slug].vue`) parses the Markdown `content` with `@nuxtjs/mdc`'s `parseMarkdown` and renders the AST through `markdownRenderer.vue` (`MDCRenderer` with `:prose="false"`, explicitly mapping the 24 `Prose*.vue` components). 随笔/杂谈已合并：`/talk` redirects to `/learn`.
+
+Song write 感想页 (`music/[id].vue`) does the same with the `write` field. The cover shown anywhere is `cover_url || embedded_cover_url` (fallback `/images/svg/disc.svg`, computed by `songCover()` in `app/utils/songCover.ts`).
+
+### Music player (global floating widget)
+
+`components/musicPlayer.vue` is mounted in `app.vue` (outside `<NuxtLayout>`, after `<SiteBackground />`) so it persists across routes: `fixed left-4 bottom-4 z-20`, hidden entirely while the playlist is empty. Collapsed state = spinning cover mini-button; expanded = panel (cover/title/artist, draggable progress bar, prev/play-pause/next/playlist/感想页 link/collapse) + `musicPlayerPlaylist.vue` popup (current track highlighted, per-row link to `/music/<id>` via `@click.stop`).
+
+Playback state lives in `app/composables/usePlayer.ts` (module-level singleton): one global `HTMLAudioElement` (created client-only in `ensureAudio()`, `preload='metadata'`), list-loop `ended` -> next, error auto-next only while consecutive errors < 2, `prev()` restarts when > 3 s in. `musicPlayer.vue` is the only data fetcher (`useSongs()` once per session) and injects the playlist via `setPlaylist()`, which also restores `{ songId, position, volume }` from localStorage (`lestine-player-v1`) as paused - never auto-resumes (autoplay policy). `playById(id)` defers via `pendingPlayId` if the playlist hasn't loaded yet (deep-landing on `/music/[id]`).
 
 ### Routing
 
@@ -64,6 +75,7 @@ Article detail (`learn/[slug].vue`) parses the Markdown `content` with `@nuxtjs/
 - `/learn` - 随笔 list (Margaret API, paginated + category filter), inside `windowFrame` (wide)
 - `/learn/[slug]` - 随笔 detail (Margaret API -> `parseMarkdown` -> `markdownRenderer`), `windowFrame` (narrow)
 - `/talk`, `/talk/**` - Redirected to `/learn` via `routeRules` (杂谈已合并入随笔)
+- `/music/[id]` - 歌曲感想 detail (Margaret API -> `parseMarkdown` of `write` -> `markdownRenderer`), `windowFrame` (narrow), large cover on the left (click to play, linked to the global player). Client-side dynamic route like `/learn/[slug]` - needs the same Nginx SPA fallback.
 - `/myfriends` - Friend links from `app/data/friendLink.ts`
 - `/about` - About page
 - `/[...slug]` - Catch-all -> 404 page (local markdown content has migrated to Margaret)

@@ -26,3 +26,45 @@
 .animate-fade-up {
   animation: fade-up 0.6s ease-out forwards;
 }
+
+
+/* 唱片旋转（播放器封面，暂停时通过 .is-paused 停转） */
+@keyframes disc-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-disc-spin {
+  animation: disc-spin 12s linear infinite;
+}
+.animate-disc-spin.is-paused {
+  animation-play-state: paused;
+}
+
+
+/* 播放面板从左下角弹出 */
+@keyframes pop-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-pop-up {
+  animation: pop-up 0.25s ease-out forwards;
+  transform-origin: bottom left;
+}
+
+/* 无障碍：系统减少动态效果时关闭装饰动画 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-disc-spin,
+  .animate-pop-up {
+    animation: none;
+  }
+}
