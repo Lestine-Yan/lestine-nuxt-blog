@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 唱片占位图：封面缺失/加载失败时兜底 -->
+  <circle cx="32" cy="32" r="30" fill="#5B4B9E"/>
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#AC9EE5" stroke-opacity="0.35" stroke-width="1"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#AC9EE5" stroke-opacity="0.45" stroke-width="1"/>
+  <circle cx="32" cy="32" r="16" fill="none" stroke="#AC9EE5" stroke-opacity="0.6" stroke-width="1"/>
+  <circle cx="32" cy="32" r="10" fill="#FDFDF2"/>
+  <circle cx="32" cy="32" r="3.5" fill="#7E6AD0"/>
+</svg>

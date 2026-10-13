@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { ApiResponse, Paginated, ArticleListItem, Article } from '~/types/margaret'
+import type { ApiResponse, Paginated, ArticleListItem, Article, SongListResult, Song } from '~/types/margaret'
 
 /** Margaret API 基础路径（相对 /api/v1，由 Nginx/devProxy 转发） */
 const useApiBase = () => useRuntimeConfig().public.margaretApiBase as string
@@ -42,5 +42,29 @@ export function useCategories() {
     baseURL: useApiBase(),
     server: false,
     transform: (r: ApiResponse<string[]>) => r.data,
+  })
+}
+
+/**
+ * 歌曲列表（客户端拉取，全量不分页，时间降序）
+ */
+export function useSongs() {
+  return useFetch<ApiResponse<SongListResult>>('/songs', {
+    baseURL: useApiBase(),
+    query: { order: 'desc' },
+    server: false,
+    transform: (r: ApiResponse<SongListResult>) => r.data,
+  })
+}
+
+/**
+ * 歌曲详情（按数字 id 客户端拉取，含感想 write）
+ */
+export function useSong(id: Ref<string>) {
+  return useFetch<ApiResponse<Song>>(() => `/songs/${id.value}`, {
+    baseURL: useApiBase(),
+    server: false,
+    transform: (r: ApiResponse<Song>) => r.data,
+    watch: [id],
   })
 }
